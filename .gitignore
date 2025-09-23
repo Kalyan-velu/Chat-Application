@@ -26,3 +26,4 @@ client_appyarn-debug.log*
 client_appyarn-error.log*
 client_app/.idea/
 server/.idea/
+server/.env.*

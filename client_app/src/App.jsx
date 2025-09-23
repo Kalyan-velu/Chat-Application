@@ -6,7 +6,9 @@ import ErrorFallback from "./errorBoundary/errorBoundary";
 import { ErrorBoundary } from "react-error-boundary";
 
 const ChatPage = React.lazy(() => import("./components/pages/ChatPage"));
-const Homepage = React.lazy(() => import("./components/pages/LandingPage"));
+const Homepage = React.lazy(
+  () => import("./components/pages/authentication-page"),
+);
 
 function App() {
   React.useEffect(() => {
@@ -31,14 +33,12 @@ function App() {
         />
       }
     >
-      <div className="App">
-        <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
-          <Routes>
-            <Route path="/" exact={true} element={<Homepage />} />
-            <Route path="/app/chats" element={<ChatPage />} />
-          </Routes>
-        </ErrorBoundary>
-      </div>
+      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
+        <Routes>
+          <Route path="/" exact={true} element={<Homepage />} />
+          <Route path="/app/chats" element={<ChatPage />} />
+        </Routes>
+      </ErrorBoundary>
     </Suspense>
   );
 }

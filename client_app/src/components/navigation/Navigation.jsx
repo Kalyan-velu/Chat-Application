@@ -11,14 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import ProfileModal from "../pages/pageComponents/profile/profileModal";
-import { ChatState } from "../context/ChatProvider";
+import { useChats } from "../context/ChatProvider";
 import AlertDialog from "./Confirmation";
 import { getSender } from "@/config/ChatLog";
 import { Icon } from "@iconify-icon/react";
+import Stack from "@mui/material/Stack";
 
 export default function Navigation() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const { user, setSelectedChat, notification, setNotification } = ChatState();
+  const { user, setSelectedChat, notification, setNotification } = useChats();
 
   const isMenuOpen = Boolean(anchorEl);
   const handleMenuClose = () => {
@@ -67,59 +68,50 @@ export default function Navigation() {
   );
 
   return (
-    <div
-      style={{
-        width: "100%",
+    <Stack
+      direction={"row"}
+      sx={{
+        alignItems: "center",
+        padding: "0 0.6rem",
+        borderColor: "primary.contrastText",
+        border: "1px solid",
       }}
+      borderRadius={"0.8rem"}
     >
-      <Box
-        sx={{
-          flexGrow: 1,
-          backgroundColor: "#591980",
-          borderRadius: "10px 0 0 0",
-        }}
-        fixed
-      >
-        <Toolbar>
-          <ProfileModal user={user} />
-          <Typography
-            variant="h5"
-            position={"static"}
-            noWrap
-            component="div"
-            sx={{
-              color: "#fff",
-              fontFamily: ["Monoton", "cursive"],
-            }}
+      <Stack direction={"row"} spacing={0} sx={{ alignItems: "center" }}>
+        <ProfileModal user={user} />
+        <Typography
+          fontWeight={700}
+          variant="h5"
+          position={"static"}
+          noWrap
+          component="div"
+        >
+          CHATS
+        </Typography>
+      </Stack>
+      <div className="grow" />
+      <Stack direction={"row"} spacing={0} sx={{ alignItems: "center" }}>
+        <Tooltip title={"Notification"}>
+          <IconButton
+            onClick={handleProfileMenuOpen}
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label={`show ${notification.length} new notifications`}
           >
-            Chat
-          </Typography>
-          <div style={{ flexGrow: 1 }} />
-          <div style={{ flexGrow: 1 }} />
-          <div>
-            <Tooltip title={"Notification"}>
-              <IconButton
-                onClick={handleProfileMenuOpen}
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label={`show ${notification.length} new notifications`}
-                sx={{ mr: 2 }}
-              >
-                <Badge badgeContent={notification.length} color={"error"}>
-                  <Icon
-                    icon="ic:baseline-notifications-active"
-                    width="24"
-                    height="24"
-                  />
-                </Badge>
-              </IconButton>
-            </Tooltip>
-          </div>
-          <AlertDialog />
-        </Toolbar>
-        {renderMenu}
-      </Box>
-    </div>
+            <Badge badgeContent={notification.length} color={"error"}>
+              <Icon
+                icon="ic:baseline-notifications-active"
+                width="24"
+                height="24"
+              />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+        <AlertDialog />
+      </Stack>
+      {renderMenu}
+    </Stack>
   );
 }

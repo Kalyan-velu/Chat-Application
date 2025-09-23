@@ -3,7 +3,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { ChatState } from "../../../context/ChatProvider";
+import { useChats } from "../../../context/ChatProvider";
 import { Icon } from "@iconify-icon/react";
 
 import { IconButton, TextField, Tooltip } from "@mui/material";
@@ -33,7 +33,7 @@ export default function GroupModal({ fetchAgain, setFetchAgain }) {
   const [search, setSearch] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat } = useChats();
 
   const handleClickOpen = () => {
     setOpen(true);

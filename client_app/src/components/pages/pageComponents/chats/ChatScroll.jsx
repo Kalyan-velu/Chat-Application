@@ -1,50 +1,74 @@
+import { Avatar, Box, Tooltip, Typography } from "@mui/material";
+import { useChats } from "../../../context/ChatProvider";
+import ScrollableFeed from "react-scrollable-feed";
 import {
   isLastMessage,
   isSameSender,
   isSameSenderMargin,
   isSameUser,
-} from "../../../../config/ChatLog";
-import { Avatar, Tooltip } from "@mui/material";
-import { ChatState } from "../../../context/ChatProvider";
-import ScrollableFeed from "react-scrollable-feed";
-
+} from "@/config/ChatLog";
+import { format } from "date-fns/format";
+import Stack from "@mui/material/Stack";
 const ScrollableChat = ({ messages }) => {
-  const { user } = ChatState();
+  const { user } = useChats();
 
   return (
     <ScrollableFeed>
       {messages &&
-        messages.map((m, i) => (
-          <div style={{ display: "flex" }} key={m._id}>
-            {(isSameSender(messages, m, i, user._id) ||
-              isLastMessage(messages, i, user._id)) && (
-              <Tooltip title={m.sender.username} placement="bottom-start">
-                <Avatar
-                  mt="7px"
-                  mr={1}
-                  size="sm"
-                  cursor="pointer"
-                  name={m.sender.username}
-                  src={m.sender.pic}
-                />
-              </Tooltip>
-            )}
-            <span
-              style={{
-                backgroundColor: `${
-                  m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0"
-                }`,
-                marginLeft: isSameSenderMargin(messages, m, i, user._id),
-                marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
-                borderRadius: "20px 20px",
-                background: "#BEE3F8",
-                padding: "5px 15px",
-              }}
+        messages.map((m, i) => {
+          const isSender = m.sender._id === user._id;
+          return (
+            <Box
+              key={m._id}
+              display="flex"
+              justifyContent={isSender ? "flex-end" : "flex-start"}
+              alignItems="flex-start"
+              mb={isSameUser(messages, m, i, user._id) ? 0.5 : 1.5}
             >
-              {m.content}
-            </span>
-          </div>
-        ))}
+              {!isSender && (
+                <Tooltip title={m.sender.username} placement="bottom-start">
+                  <Avatar
+                    src={m.sender.pic}
+                    alt={m.sender.username}
+                    sx={{ width: 32, height: 32, mr: 1 }}
+                  />
+                </Tooltip>
+              )}
+              <Stack spacing={1}>
+                <Box
+                  sx={{
+                    // maxWidth: "70%",
+                    px: 2,
+                    py: 1,
+                    // borderRadius: 10,
+                    borderTopLeftRadius: isSender ? 10 : 0,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+                    borderTopRightRadius: isSender ? 0 : 10,
+                    backgroundColor: "secondary.main",
+                    // ml: isSender
+                    //   ? 0
+                    //   : isSameSenderMargin(messages, m, i, user._id),
+                    textAlign: "left",
+                    wordBreak: "break-word",
+                    boxShadow: 1,
+                  }}
+                >
+                  <Typography variant="body1" fontWeight={"400"}>
+                    {m.content}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{ alignSelf: "end" }}
+                  color="text.secondary"
+                >
+                  {format(new Date(m.createdAt), "hh:mm a dd MMM")}
+                </Typography>
+              </Stack>
+            </Box>
+          );
+        })}
     </ScrollableFeed>
   );
 };

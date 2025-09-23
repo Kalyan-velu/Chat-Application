@@ -1,93 +1,95 @@
 import * as React from "react";
-import { Box, styled } from "@mui/system";
-import ModalUnstyled from "@mui/base/ModalUnstyled";
-import Typography from "@mui/material/Typography";
-import { IconButton } from "@mui/material";
+import { useState } from "react";
+import {
+  Box,
+  Typography,
+  Avatar,
+  IconButton,
+  Button,
+  Divider,
+  useTheme,
+} from "@mui/material";
+import Modal from "@mui/material/Modal";
 import { Icon } from "@iconify-icon/react";
 
-const StyledModal = styled(ModalUnstyled)`
-  position: fixed;
-  z-index: 1300;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Backdrop = styled("div")`
-  z-index: -1;
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  -webkit-tap-highlight-color: transparent;
-`;
-
-const style = {
-  position: "absolute",
-  display: "grid",
-  flexDirection: "column",
-  justifyItems: "center",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  backgroundColor: "#f7f6f8",
-  width: 400,
-  border: "2px solid #blue",
-  borderRadius: "10px",
-  boxShadow: 24,
-  p: 4,
-};
-
 export default function UserProfileModal({ user }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const theme = useTheme();
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: theme.palette.background.paper,
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[5],
+    p: 4,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 3,
+    width: { xs: "90%", sm: 400 },
+    maxHeight: "90vh",
+    overflowY: "auto",
+  };
 
   return (
     <div>
       <IconButton onClick={handleOpen}>
-        <Icon icon="ic:twotone-more-vert" width="24" height="24" />
+        <Icon icon="ic:twotone-more-vert" width={24} height={24} />
       </IconButton>
 
-      <StyledModal
-        aria-labelledby="unstyled-modal-title"
-        aria-describedby="unstyled-modal-description"
-        open={open}
-        onClose={handleClose}
-        BackdropComponent={Backdrop}
-      >
-        <Box sx={style}>
-          <Box p={2}>
-            <img
-              src={user.pic}
-              width={"200px"}
-              style={{ borderRadius: "50%" }}
-              height={"200px"}
-              alt={user.token}
-            />
-          </Box>
-          <Box width={"100%"}>
-            Username:
-            <Typography
-              varient={"h3"}
-              sx={{
-                fontSize: "23px",
-                font: "bold",
-              }}
-            >
-              {user.username}
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={modalStyle}>
+          {/* Avatar */}
+          <Avatar
+            src={user.pic}
+            alt={user.username}
+            sx={{ width: 150, height: 150, mb: 2 }}
+          />
+
+          {/* Upload Button */}
+          <input
+            accept="image/*"
+            style={{ display: "none" }}
+            id="profile-upload"
+            type="file"
+          />
+          <label htmlFor="profile-upload">
+            <Button variant="contained" color="primary" component="span">
+              Change Photo
+            </Button>
+          </label>
+
+          <Divider
+            sx={{ width: "100%", my: 2, borderColor: theme.palette.divider }}
+          />
+
+          {/* User Info */}
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            <Typography variant="subtitle1" color="text.secondary">
+              Username
             </Typography>
-            Phone Number:
-            <Typography fontSize={"23px"}>{user.phoneNumber}</Typography>
+            <Typography variant="h6">{user.username}</Typography>
+
+            <Typography variant="subtitle1" color="text.secondary" mt={1}>
+              Phone Number
+            </Typography>
+            <Typography variant="h6">{user.phoneNumber}</Typography>
           </Box>
         </Box>
-      </StyledModal>
+      </Modal>
     </div>
   );
 }

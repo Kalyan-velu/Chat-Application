@@ -1,8 +1,8 @@
 import * as React from "react";
-import { ChatState } from "@/components/context/ChatProvider";
+import { useChats } from "@/components/context/ChatProvider";
 import Box from "@mui/system/Box";
 import Typography from "@mui/material/Typography";
-import { Grid, IconButton, TextField } from "@mui/material";
+import { Grid, IconButton, Paper, TextField } from "@mui/material";
 import { getSender, getSenderFull } from "@/config/ChatLog";
 import UserProfileModal from "../../../profile/UserProfileModal";
 import GroupModal from "../../../profile/GroupModal";
@@ -11,6 +11,9 @@ import ChatScroll from "../../ChatScroll";
 import { io } from "socket.io-client";
 import GiF from "../../../../../../animations/Welcome";
 import { Icon } from "@iconify-icon/react";
+import Stack from "@mui/material/Stack";
+import InputBase from "@mui/material/InputBase";
+import { alpha } from "@mui/material/styles";
 
 const ENDPOINT = "https://chat-application-server.onrender.com";
 let socket, selectedChatCompare;
@@ -22,7 +25,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [isTyping, setIsTyping] = React.useState(false);
   const [socketConnected, setSocketConnected] = React.useState(false);
   const { user, notification, setNotification, selectedChat, setSelectedChat } =
-    ChatState();
+    useChats();
 
   async function fetchMessages() {
     if (!selectedChat) {
@@ -126,114 +129,81 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   return (
     <>
       {selectedChat ? (
-        <Grid container>
-          <div
-            style={{
-              backgroundColor: "#111",
-            }}
-          />
-          <Box
-            width={"100%"}
-            height={"63px"}
-            display={"flex"}
-            bgcolor={"#591980"}
-            justifyContent={"space-around"}
-            alignItems={"center"}
-          >
-            <IconButton onClick={() => setSelectedChat("")}>
-              <Icon icon="ic:outline-arrow-back-ios" width="24" height="24" />
-            </IconButton>
-
-            <div style={{ flexGrow: "1" }} />
-            {!selectedChat.isGroupChat ? (
-              <>
-                <div style={{ flexGrow: "1" }} />
-                <Typography fontSize={"20px"}>
-                  {getSender(user, selectedChat.users).toUpperCase()}
-                </Typography>
-                <div style={{ flexGrow: "1" }} />
-              </>
-            ) : (
-              <>
-                <div style={{ flexGrow: "1" }} />
-                <Typography fontSize={"20px"}>
-                  {selectedChat.chatName.toUpperCase()}
-                </Typography>
-                <div style={{ flexGrow: "1" }} />
-              </>
-            )}
-            <div style={{ flexGrow: "1" }} />
-            {!selectedChat.isGroupChat ? (
-              <>
-                <UserProfileModal
-                  user={getSenderFull(user, selectedChat.users)}
-                />
-              </>
-            ) : (
-              <>
-                <GroupModal
-                  fetchAgain={fetchAgain}
-                  setFetchAgain={setFetchAgain}
-                />
-              </>
-            )}
-          </Box>
-          <div
-            style={{
-              height: "85vh",
-              width: "71vw",
-            }}
-          >
-            <Box
-              display={"flex"}
-              flexDirection={"column"}
-              justifyContent={"flex-end"}
-              width={"100%"}
-              height={"100%"}
-              p={3}
-              bgcolor={"#E8E8E8"}
-              style={{ overflowY: "hidden" }}
-            >
-              {loading ? (
-                <div>loading</div>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    overflowY: "scroll",
-                    scrollbarWidth: "none",
-                  }}
-                >
-                  <ChatScroll messages={messages} />
-                  {isTyping ? <div>Loading...</div> : null}
-                  <TextField
-                    variant={"outlined"}
-                    margin={"dense"}
-                    fullWidth
-                    placeholder={"Type a message"}
-                    size={"small"}
-                    onKeyDown={sendMessage}
-                    onChange={typingHandler}
-                    value={newMessage}
-                  />
-                </div>
-              )}
-            </Box>
-          </div>
-        </Grid>
-      ) : (
         <Box
-          alignItems={"center"}
-          display="grid"
-          paddingTop={"20%"}
-          justifyItems={"center"}
+          display={"flex"}
+          flexDirection={"column"}
+          justifyContent={"flex-end"}
+          flexGrow={1}
+          maxHeight={"calc(100dvh - 6.5rem)"}
+          p={0}
+          style={{ overflowY: "hidden" }}
         >
-          <GiF />
-          <Typography variant={"h4"} color={"#0f112d"} pb={3}>
+          {loading ? (
+            <div>loading</div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                overflowY: "scroll",
+                scrollbarWidth: "none",
+              }}
+            >
+              <ChatScroll messages={messages} />
+              {isTyping ? <div>Loading...</div> : null}
+              <Paper
+                component="form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (newMessage) sendMessage({ key: "Enter" });
+                }}
+                sx={(theme) => ({
+                  mt: 1,
+                  p: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  borderRadius: 4,
+                  boxShadow: 1,
+                  border: `1px solid ${alpha(theme.palette.primary.contrastText, 0.2)}`,
+                })}
+              >
+                <InputBase
+                  sx={{ ml: 4, flex: 1 }}
+                  placeholder="Type a message..."
+                  multiline
+                  maxRows={4}
+                  value={newMessage}
+                  onKeyDown={(e) => {
+                    if (e.shiftKey && e.key === "Enter") {
+                      sendMessage(e);
+                    }
+                  }}
+                  onChange={typingHandler}
+                />
+                <IconButton
+                  type={"submit"}
+                  color="primary.contrastText"
+                  sx={{ p: "10px" }}
+                  onClick={() => newMessage && sendMessage({ key: "Enter" })}
+                >
+                  <Icon icon="mdi:send" />
+                </IconButton>
+              </Paper>
+            </div>
+          )}
+        </Box>
+      ) : (
+        <Stack
+          spacing={2}
+          alignItems={"center"}
+          justifyContent={"center"}
+          height={"100%"}
+        >
+          <GiF style={{ borderRadius: "1.3rem", overflow: "clip" }} />
+          <Typography variant={"h4"} pb={3}>
             Click on a conversation to start chatting
           </Typography>
-        </Box>
+        </Stack>
       )}
     </>
   );

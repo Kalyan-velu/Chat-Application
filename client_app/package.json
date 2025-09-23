@@ -15,6 +15,7 @@
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "colors": "^1.4.0",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "lottie-web": "^5.13.0",
     "nodemon": "^3.1.10",

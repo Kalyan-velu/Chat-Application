@@ -1,8 +1,8 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import { ChatState } from "../../../context/ChatProvider";
+import { useChats } from "../../../context/ChatProvider";
 
 const UserListItem = ({ handleFunction }) => {
-  const { user } = ChatState();
+  const { user } = useChats();
   const style = {
     backgroundColor: "#cea1a1",
     width: "100%",

@@ -1,24 +1,26 @@
-import React, { useEffect } from "react";
-import Box from "@mui/system/Box";
-import SearchModal from "./Search";
-import { ChatState } from "../../../context/ChatProvider";
+import React, { memo, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { chatInstance } from "../../../../config/axios";
-import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
+import { useChats } from "../../../context/ChatProvider";
+import { chatInstance } from "@/config/axios";
 import ChatLoading from "../loading/ChatLoading";
-import Stack from "@mui/material/Stack";
-import { getSender } from "../../../../config/ChatLog";
+import { getSender } from "@/config/ChatLog";
 import NewGroup from "./messages/groupChat/NewGroup";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
 export default function MyChats({ fetchAgain }) {
   const [openE, setOpenE] = React.useState(false);
   const [error, setError] = React.useState("");
   const [loggedUser, setLoggedUser] = React.useState();
-  const { user, chats, selectedChat, setSelectedChat, setChats } = ChatState();
+  const { user, chats, selectedChat, setChats } = useChats();
 
   const handleClose = () => setOpenE(false);
 
@@ -29,90 +31,113 @@ export default function MyChats({ fetchAgain }) {
           Authorization: `Bearer ${user.token}`,
         },
       });
-      console.log(response.data);
       setChats(response.data);
     } catch (e) {
       setOpenE(true);
       setError("Failed to load chat");
     }
   };
+
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
   }, [fetchAgain]);
 
-  console.log(selectedChat);
   return (
-    <div
-      style={{
-        height: "91vh",
-      }}
-    >
-      <Box
-        display={{ base: selectedChat ? null : "flex", md: "flex" }}
-        flexDirection={"column"}
-        width="100%"
-        height={"100%"}
+    <>
+      <Stack
+        spacing={2}
         sx={{
-          backgroundColor: "#8B66D8",
+          height: "100%",
           borderRadius: "0 0 0 10px",
+          overflow: "hidden",
         }}
       >
+        {/* Header Row */}
         <Box
-          fontSize={{ base: "16px", md: "20px" }}
-          display={"flex"}
-          width={"100%"}
-          marginTop={"10px"}
-          justifyContent="space-around"
-          alignItem={"center"}
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+          px={2}
+          // py={1.5}
+          // borderBottom="1px solid"
+          // borderColor="divider"
         >
-          <Typography variant={"h5"}>Messages</Typography>
           <NewGroup />
         </Box>
-        <Box borderRadius={"30px"} margin={"20px"} bgcolor={"inherit"}>
-          <SearchModal setError={setError} setOpenE={setOpenE} user={user} />
-        </Box>
-        <Box
-          d={"flex"}
-          flexDirection={"column"}
-          height={"100%"}
-          p={3}
-          bgcolor={"#8B66D8"}
-          borderRadius={"10px"}
-          overflowy={"hidden"}
-        >
+
+        {/* Chat List */}
+        <Box flex={1} overflow="auto">
           {chats ? (
-            <Stack spacing={1}>
-              {chats.map((chat) => (
-                <Box
-                  onClick={() => setSelectedChat(chat)}
-                  cursor={"pointer"}
-                  bgcolor={selectedChat === chat ? "#6ed2d2" : "#EEEFC5"}
-                  px={3}
-                  py={2}
-                  borderRadius={"5px"}
-                  key={chat._id}
-                >
-                  <Typography varient={"h4"}>
-                    {!chat.isGroupChat
-                      ? getSender(loggedUser, chat.users)
-                      : chat.chatName}
-                  </Typography>
-                </Box>
+            <Stack spacing={0}>
+              {chats.map((chat, index) => (
+                <React.Fragment key={chat._id}>
+                  <ChatItem
+                    chat={chat}
+                    chatName={
+                      !chat.isGroupChat
+                        ? getSender(loggedUser, chat.users)
+                        : chat.chatName
+                    }
+                    isSelected={selectedChat?._id === chat._id}
+                  />
+                  {index < chats.length - 1 && <Divider variant="fullWidth" />}
+                </React.Fragment>
               ))}
             </Stack>
           ) : (
             <ChatLoading />
           )}
         </Box>
-      </Box>
-      {error ? (
+      </Stack>
+
+      {/* Error Snackbar */}
+      {error && (
         <Snackbar open={openE} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
             {error}
           </Alert>
         </Snackbar>
-      ) : null}
-    </div>
+      )}
+    </>
   );
 }
+
+const ChatItem = memo(({ chat, chatName, isSelected }) => {
+  const { setSelectedChat } = useChats();
+  return (
+    <Box
+      onClick={() => setSelectedChat(chat)}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        px: 2,
+        py: 1.5,
+        cursor: "pointer",
+        bgcolor: isSelected ? "action.selected" : "transparent",
+        borderRadius: 2,
+        "&:hover": {
+          backgroundColor: "action.hover",
+        },
+        transition: "background-color 0.2s",
+      }}
+    >
+      <Avatar
+        src={!chat.isGroupChat ? chat.users[1]?.pic : ""}
+        alt={chatName}
+        sx={{ width: 40, height: 40, mr: 2 }}
+      />
+      <Box>
+        <Typography variant="subtitle1" fontWeight={600}>
+          {chatName}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" noWrap width="200px">
+          {chat.latestMessage
+            ? `${chat.latestMessage.sender.username}: ${chat.latestMessage.content}`
+            : "No messages yet"}
+        </Typography>
+      </Box>
+    </Box>
+  );
+});
+ChatItem.displayName = "ChatItem";

@@ -3,7 +3,7 @@ import Box from "@mui/system/Box";
 import { styled } from "@mui/system";
 import ModalUnstyled from "@mui/base/ModalUnstyled";
 import TextField from "@mui/material/TextField";
-import { ChatState } from "@/components/context/ChatProvider";
+import { useChats } from "@/components/context/ChatProvider";
 import Typography from "@mui/material/Typography";
 import { authInstance, chatInstance } from "@/config/axios";
 import Button from "@mui/material/Button";
@@ -51,7 +51,7 @@ export default function NewGroup() {
   const [loading, setLoading] = React.useState(false);
   const [searchResults, setSearchResults] = React.useState([]);
 
-  const { user, chats, setChats } = ChatState();
+  const { user, chats, setChats } = useChats();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -118,7 +118,7 @@ export default function NewGroup() {
   }
 
   return (
-    <div>
+    <>
       <Tooltip title={"Create Group"}>
         <Button
           color={"inherit"}
@@ -189,6 +189,6 @@ export default function NewGroup() {
           </Box>
         </Box>
       </StyledModal>
-    </div>
+    </>
   );
 }

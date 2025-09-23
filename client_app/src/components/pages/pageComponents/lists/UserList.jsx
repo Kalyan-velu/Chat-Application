@@ -1,43 +1,48 @@
 import Box from "@mui/material/Box";
-import { Avatar } from "@mui/material";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Avatar, Button, Typography } from "@mui/material";
 import { styled } from "@mui/system";
 
-const MyButton = styled(Button)({
-  background: "#EEEFC5",
+const UserButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
   "&:hover": {
-    background: "#d9c0c0",
+    backgroundColor: theme.palette.action.hover,
   },
   border: 0,
-  borderRadius: 9,
-  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
-  color: "#111",
+  borderRadius: theme.shape.borderRadius * 2,
+  boxShadow: theme.shadows[2],
+  color: theme.palette.text.primary,
   width: "100%",
-  height: 48,
-  marginTop: "20px",
-  margin: "10px",
-  alignItems: "-moz-initial",
-});
+  height: 64,
+  margin: theme.spacing(1, 0),
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  padding: theme.spacing(1.5),
+  textTransform: "none", // keeps original casing
+}));
 
 const UserListItem = ({ user, handleFunction }) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyItems: "left",
-      }}
-    >
-      <MyButton onClick={handleFunction}>
-        <Avatar margin={2} size={"sm"} name={user.username} src={user.pic} />
-        <Box>
-          <Typography varient={"h4"}>
-            <b>{user.username}</b>
-          </Typography>
-          <Typography varient={"h3"}>{user.phoneNumber}</Typography>
-        </Box>
-      </MyButton>
-    </div>
+    <UserButton onClick={handleFunction}>
+      <Avatar
+        alt={user.username}
+        src={user.pic}
+        sx={{
+          width: 48,
+          height: 48,
+          mr: 2,
+        }}
+      />
+      <Box textAlign="left">
+        <Typography variant="subtitle1" fontWeight={600} color="text.primary">
+          {user.username}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {user.phoneNumber}
+        </Typography>
+      </Box>
+    </UserButton>
   );
 };
+
 export default UserListItem;

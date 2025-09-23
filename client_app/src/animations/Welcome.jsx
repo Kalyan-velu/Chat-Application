@@ -1,9 +1,15 @@
 import Gif from "./Untitled design.gif";
 import React from "react";
 
-const GiF = () => {
+/**
+ *
+ * @param {Omit<React.ComponentProps<"div">,'children'>} props
+ * @returns {React.JSX.Element}
+ * @constructor
+ */
+const GiF = (props) => {
   return (
-    <div>
+    <div {...props}>
       <img src={Gif} alt={"WELCOME"} />
     </div>
   );

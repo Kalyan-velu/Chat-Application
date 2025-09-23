@@ -1,40 +1,19 @@
 import React, { useState } from "react";
-import { Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import Snackbar from "@mui/material/Snackbar";
+import { Box, Button, TextField, Typography, Snackbar } from "@mui/material";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import MuiAlert from "@mui/material/Alert";
 import * as Yup from "yup";
 import axios from "axios";
-import MuiAlert from "@mui/material/Alert";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const Register = () => {
-  const [open, setOpen] = React.useState(false);
-  const [openS, setOpenS] = React.useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  const gridStyle = {
-    display: "grid",
-    justifyContent: "center",
-  };
-  const paperStyle = {
-    backgroundColor: "#d6dbee",
-    padding: "0 15px 40px 15px",
-    borderRadius: "10px",
-    width: "inherit",
-  };
-  const styleField = {
-    padding: "5px 5px 5px 5px",
-  };
-  const btnStyle = {
-    color: "#0072E5",
-    display: "center",
-    marginTop: 10,
-    width: "50%",
-  };
+  const [open, setOpen] = useState(false);
+  const [openS, setOpenS] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const phoneRegExp = /^[1-9]{2}[0-9]{8}/;
   const passwordRegExp =
@@ -47,160 +26,136 @@ const Register = () => {
     confirmPassword: "",
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenS(false);
-    setOpen(false);
-  };
-
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Required"),
     phoneNumber: Yup.string()
-      .matches(phoneRegExp, "Enter valid Phone number")
+      // .matches(phoneRegExp, "Enter valid phone number")
       .required("Required"),
     password: Yup.string()
-      .min(6, "Minimum characters should be 6")
+      .min(6, "Minimum 6 characters")
       .matches(
         passwordRegExp,
-        "Password must have one upper, lower case, number, special symbol",
+        "Password must have upper, lower, number & special char",
       )
       .required("Required"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password")], "Password not matches")
+      .oneOf([Yup.ref("password")], "Passwords must match")
       .required("Required"),
   });
 
+  const handleClose = (event) => {
+    if (reason === "clickaway") return;
+    setOpen(false);
+    setOpenS(false);
+  };
+
   const onSubmit = async (values) => {
-    const response = await axios
-      .post("/api/user/register", values)
-      .catch((err) => {
-        setError(err.response.data.message);
-        setOpen(true);
-        console.log(err);
-      });
-    if (response) {
+    try {
+      const response = await axios.post("/api/user/register", values);
       setSuccess(response.data.message);
       setOpenS(true);
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
+      setOpen(true);
     }
   };
 
   return (
-    <Grid style={gridStyle}>
+    <Box>
+      <Typography variant="h6" mb={2} color="white">
+        Create your account
+      </Typography>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={onSubmit}
       >
         {(props) => (
-          <Form noValidate>
-            <Paper elevation={0} style={paperStyle}>
-              <div style={styleField}>
-                <Field
-                  as={TextField}
-                  margin={"dense"}
-                  padding={"dense"}
-                  name="username"
-                  label="Username"
-                  fullWidth
-                  error={props.errors.username && props.touched.username}
-                  helperText={<ErrorMessage name="name" />}
-                  required
-                />
-
-                <Field
-                  as={TextField}
-                  margin={"dense"}
-                  padding={"dense"}
-                  name="phoneNumber"
-                  label="Phone Number"
-                  fullWidth
-                  error={props.errors.phoneNumber && props.touched.phoneNumber}
-                  helperText={<ErrorMessage name="phoneNumber" />}
-                  required
-                />
-
-                <Field
-                  as={TextField}
-                  margin={"dense"}
-                  padding={"dense"}
-                  name="password"
-                  label="Password"
-                  type="password"
-                  fullWidth
-                  error={props.errors.password && props.touched.password}
-                  helperText={<ErrorMessage name="password" />}
-                  required
-                />
-
-                <Field
-                  as={TextField}
-                  margin={"dense"}
-                  padding={"dense"}
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  fullWidth
-                  error={
-                    props.errors.confirmPassword &&
-                    props.touched.confirmPassword
-                  }
-                  helperText={<ErrorMessage name="confirmPassword" />}
-                  required
-                />
-              </div>
-              <Grid align="center">
-                <Snackbar
-                  open={openS}
-                  autoHideDuration={6000}
-                  onClose={handleClose}
-                >
-                  <Alert
-                    onClose={handleClose}
-                    severity="success"
-                    sx={{ width: "100%" }}
-                  >
-                    {success}
-                  </Alert>
-                </Snackbar>
-                {error ? (
-                  <Snackbar
-                    open={open}
-                    autoHideDuration={6000}
-                    onClose={handleClose}
-                  >
-                    <Alert
-                      onClose={handleClose}
-                      severity="error"
-                      sx={{ width: "100%" }}
-                    >
-                      {error}
-                    </Alert>
-                  </Snackbar>
-                ) : null}
-              </Grid>
-            </Paper>
-            <Grid align="center">
-              <Typography variant="caption" color="secondary">
-                Fill the form to create an account
-              </Typography>
-            </Grid>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                padding: "15px",
+          <Form>
+            <Box mb={2}>
+              <Field
+                as={TextField}
+                fullWidth
+                name="username"
+                label="Username"
+                variant="outlined"
+                size="small"
+                error={props.errors.username && props.touched.username}
+                helperText={<ErrorMessage name="username" />}
+              />
+            </Box>
+            <Box mb={2}>
+              <Field
+                as={TextField}
+                fullWidth
+                name="phoneNumber"
+                label="Phone Number"
+                variant="outlined"
+                size="small"
+                error={props.errors.phoneNumber && props.touched.phoneNumber}
+                helperText={<ErrorMessage name="phoneNumber" />}
+              />
+            </Box>
+            <Box mb={2}>
+              <Field
+                as={TextField}
+                fullWidth
+                type="password"
+                name="password"
+                label="Password"
+                variant="outlined"
+                size="small"
+                error={props.errors.password && props.touched.password}
+                helperText={<ErrorMessage name="password" />}
+              />
+            </Box>
+            <Box mb={3}>
+              <Field
+                as={TextField}
+                fullWidth
+                type="password"
+                name="confirmPassword"
+                label="Confirm Password"
+                variant="outlined"
+                size="small"
+                error={
+                  props.errors.confirmPassword && props.touched.confirmPassword
+                }
+                helperText={<ErrorMessage name="confirmPassword" />}
+              />
+            </Box>
+            <Button
+              type="submit"
+              fullWidth
+              sx={{
+                background: "linear-gradient(90deg,#0072E5,#3399FF)",
+                color: "#fff",
+                py: 1.5,
+                fontWeight: 600,
+                borderRadius: 2,
+                "&:hover": {
+                  background: "linear-gradient(90deg,#3399FF,#0072E5)",
+                },
               }}
             >
-              <Button type="submit" style={btnStyle} variant="outlined">
-                Register
-              </Button>
-            </div>
+              Register
+            </Button>
           </Form>
         )}
       </Formik>
-    </Grid>
+
+      <Snackbar open={openS} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+          {success}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 
