@@ -9,7 +9,7 @@ const accessChat = async (request, response) => {
     console.log("UserId is not sent");
     return response.sendStatus(400);
   }
-  var isChat = await Chat.find({
+  let isChat = await Chat.find({
     isGroupChat: false,
     //should satisfy both conditions
     $and: [
@@ -31,7 +31,7 @@ const accessChat = async (request, response) => {
   if (isChat.length > 0) {
     response.send(isChat[0]);
   } else {
-    var chatData = {
+    let chatData = {
       chatName: "sender",
       isGroupChat: false,
       users: [request.user._id, userId],
@@ -43,9 +43,11 @@ const accessChat = async (request, response) => {
         "-password",
       );
       response.status(200).send(FullChat);
+      return;
     } catch (e) {
       console.log(e);
       response.status(400);
+      return;
     }
   }
 };
@@ -75,7 +77,7 @@ const createGroupChat = async (request, response) => {
     return response.status(400).send({ message: "Please fill all the fields" });
   }
 
-  var users = JSON.parse(request.body.users);
+  let users = JSON.parse(request.body.users);
   if (users.length < 2) {
     return response.status(400).send("Add More than two users");
   }
@@ -115,10 +117,11 @@ const renameGroupChat = async (request, response) => {
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
   if (!updatedChat) {
-    response.status(404);
-    throw new Error("Chat Not Found");
+    response.status(404).json({ message: "Chat Not Found" });
+    return;
   } else {
     response.json(updatedChat);
+    return;
   }
 };
 
@@ -138,9 +141,10 @@ const addToGroup = async (request, response) => {
     .populate("groupAdmin", "-password");
   if (!added) {
     response.status(404);
-    throw new Error("Chat Not Found");
+    return;
   } else {
     response.json(added);
+    return;
   }
 };
 
@@ -159,10 +163,11 @@ const removeFromGroup = async (request, response) => {
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
   if (!removed) {
-    response.status(404);
-    throw new Error("Chat Not Found");
+    response.status(404).json({ message: "Chat Not Found" });
+    return;
   } else {
     response.json(removed);
+    return;
   }
 };
 module.exports = {

@@ -9,14 +9,14 @@ const sendMessage = async (request, response) => {
     return response.sendStatus(400);
   }
 
-  var newMessage = {
+  let newMessage = {
     sender: request.user._id,
     content: content,
     chat: chatId,
   };
   //Querying data
   try {
-    var message = await Message.create(newMessage);
+    let message = await Message.create(newMessage);
     //populating instance of mongoose
     message = await message.populate("sender", "username pic");
     message = await message.populate("chat");
@@ -29,10 +29,11 @@ const sendMessage = async (request, response) => {
       latestMessage: message,
     });
     response.json(message);
+    return;
   } catch (e) {
     console.log(e);
-    response.status(400);
-    throw new Error(e.message);
+    response.status(400).json({ message: "Unable to send message" });
+    return;
   }
 };
 
@@ -43,9 +44,11 @@ const allMessages = async (request, response) => {
       .populate("chat");
 
     response.json(messages);
+    return;
   } catch (e) {
     console.log(e);
     response.status(400);
+    return;
   }
 };
 

@@ -15,6 +15,7 @@ const registerUser = async (require, response) => {
     response.status(400).json({
       message: "User already exists",
     });
+    return;
   }
   const user = await User.create({
     username,
@@ -37,6 +38,7 @@ const registerUser = async (require, response) => {
       message: "User not created",
     });
   }
+  return;
 };
 
 const authUser = async (require, response) => {
@@ -78,6 +80,7 @@ const allUsers = async (request, respond) => {
     _id: { $ne: request.user._id },
   });
   respond.send(users);
+  return;
 };
 
 module.exports = {
