@@ -45,13 +45,18 @@ export default function AlertDialog() {
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             You have to log in again !!
-            <br />
-            Until then Goodbye❤️❤️
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>No</Button>
-          <Button onClick={logOutHandler} autoFocus>
+          <Button variant={"contained"} onClick={handleClose}>
+            No
+          </Button>
+          <Button
+            variant={"outlined"}
+            sx={{ color: "primary.contrastText" }}
+            onClick={logOutHandler}
+            autoFocus
+          >
             Yes
           </Button>
         </DialogActions>

@@ -11,12 +11,13 @@ import { chatInstance } from "@/config/axios";
 import ChatLoading from "../loading/ChatLoading";
 import { getSender } from "@/config/ChatLog";
 import NewGroup from "./messages/groupChat/NewGroup";
+import SearchModal from "@/components/pages/pageComponents/chats/Search";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function MyChats({ fetchAgain }) {
+export default function MyChats({ fetchAgain, showSearchBar }) {
   const [openE, setOpenE] = React.useState(false);
   const [error, setError] = React.useState("");
   const [loggedUser, setLoggedUser] = React.useState();
@@ -56,13 +57,17 @@ export default function MyChats({ fetchAgain }) {
         {/* Header Row */}
         <Box
           display="flex"
-          justifyContent="flex-end"
+          justifyContent={showSearchBar ? "space-between" : "flex-end"}
           alignItems="center"
           px={2}
+          gap={3}
           // py={1.5}
           // borderBottom="1px solid"
           // borderColor="divider"
         >
+          {showSearchBar ? (
+            <SearchModal setError={setError} setOpenE={setOpenE} user={user} />
+          ) : undefined}
           <NewGroup />
         </Box>
 

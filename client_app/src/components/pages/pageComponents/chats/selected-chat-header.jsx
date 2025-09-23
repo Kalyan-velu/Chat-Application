@@ -7,8 +7,11 @@ import { useChats } from "@/components/context/ChatProvider";
 import { getSender } from "@/config/ChatLog";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import ProfileModal from "@/components/pages/pageComponents/profile/profileModal";
-export default function SelectedChatHeader() {
-  const { selectedChat } = useChats();
+import { IconButton } from "@mui/material";
+import { Icon } from "@iconify-icon/react";
+
+export default function SelectedChatHeader({ backButton }) {
+  const { selectedChat, setSelectedChat } = useChats();
   const chat = useMemo(() => selectedChat, [selectedChat]);
   const chatName = chat
     ? getSender(JSON.parse(localStorage.getItem("userInfo")), chat.users)
@@ -19,11 +22,21 @@ export default function SelectedChatHeader() {
         sx={{
           display: "flex",
           alignItems: "center",
-          px: 2,
+          px: backButton ? 0 : 2,
+          rowGap: backButton ? 2 : 0,
           py: 1.5,
           cursor: "pointer",
         }}
       >
+        {backButton && (
+          <IconButton
+            onClick={() => {
+              setSelectedChat(undefined);
+            }}
+          >
+            <Icon icon="ep:arrow-left" width="24" height="24" />
+          </IconButton>
+        )}
         <ProfileModal
           trigger={
             <Avatar
