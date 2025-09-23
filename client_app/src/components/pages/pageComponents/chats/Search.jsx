@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { alpha, styled } from "@mui/material/styles";
-import LoadingButton from "@mui/material/button";
+import { Button as LoadingButton } from "@mui/material";
 import InputBase from "@mui/material/InputBase";
 import { Icon } from "@iconify-icon/react";
 import { ChatState } from "../../../context/ChatProvider";
