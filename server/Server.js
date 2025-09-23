@@ -42,11 +42,11 @@ app.use("/api/message", messageRoutes);
 //Deployment
 const __dirname1 = path.resolve();
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "../client_app/build")));
+  app.use(express.static(path.join(__dirname1, "../client_app/dist")));
 
   app.get("*", (request, response) => {
     response.sendFile(
-      path.resolve(__dirname1, "../client_app", "build", "index.html"),
+      path.resolve(__dirname1, "../client_app", "dist", "index.html"),
     );
   });
 } else {
