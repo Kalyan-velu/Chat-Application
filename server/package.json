@@ -4,8 +4,8 @@
   "main": "Server.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "yarn install && nodemon",
-    "pre-build": "cd ../client_app && yarn install && yarn build"
+    "start": "node Server.js",
+    "pre-build": "cd ../client_app && pnpm install && pnpm build && cd ../server && pnpm install"
   },
   "keywords": [],
   "author": "",

@@ -35,7 +35,7 @@ function App() {
         <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => {}}>
           <Routes>
             <Route path="/" exact={true} element={<Homepage />} />
-            {/*<Route path="/app/chats" element={<ChatPage />} />*/}
+            <Route path="/app/chats" element={<ChatPage />} />
           </Routes>
         </ErrorBoundary>
       </div>
