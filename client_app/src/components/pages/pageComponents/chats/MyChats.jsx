@@ -72,7 +72,13 @@ export default function MyChats({ fetchAgain, showSearchBar }) {
         </Box>
 
         {/* Chat List */}
-        <Box flex={1} overflow="auto">
+        <Box
+          flex={1}
+          overflowY="auto"
+          maxHeight={"calc(100dvh - 10rem)"}
+          p={0}
+          sx={{ overflowX: "hidden" }}
+        >
           {chats ? (
             <Stack spacing={0}>
               {chats.map((chat, index) => (
