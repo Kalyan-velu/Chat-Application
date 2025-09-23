@@ -147,7 +147,7 @@ export default function SearchModal(props) {
         <Box sx={style}>
           <Search>
             <SearchIconWrapper>
-              <SearchTwoTone />
+              <Icon icon="ic:outline-search" width="24" height="24" />
             </SearchIconWrapper>
             <StyledInputBase
               value={search}
