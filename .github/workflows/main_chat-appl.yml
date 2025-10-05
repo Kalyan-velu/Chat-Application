@@ -38,7 +38,7 @@ jobs:
         working-directory: server
         run: |
           pnpm install --frozen-lockfile
-          pnpm run build --if-present
+          pnpm run  pre-build --if-present
 
       # Copy built client files to server/public
       - name: Copy client build to server public folder
@@ -75,5 +75,6 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: server
+
 
 
