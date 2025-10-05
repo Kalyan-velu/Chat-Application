@@ -25,13 +25,13 @@ jobs:
       - name: Install server dependencies
         working-directory: server
         run: |
-          npm install
+          npm install --legacy-peer-deps
 
       # Build frontend
       - name: Build frontend
         working-directory: client_app
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm build
 
       - name: Copy frontend build into server
@@ -74,6 +74,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: server
     
+
 
 
 
