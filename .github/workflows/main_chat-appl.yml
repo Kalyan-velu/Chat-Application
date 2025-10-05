@@ -72,15 +72,7 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: server
-      # Set Startup Command in Azure
-      - name: Configure startup command
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az webapp config set --resource-group chat \
-              --name chat-appl \
-              --startup-file "pnpm install --frozen-lockfile && npm start"
-
+    
 
 
 
