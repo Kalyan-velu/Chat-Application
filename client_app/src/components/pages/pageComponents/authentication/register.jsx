@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Snackbar } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Snackbar,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import MuiAlert from "@mui/material/Alert";
 import * as Yup from "yup";
 import axios from "axios";
+import { Icon } from "@iconify-icon/react";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -14,6 +23,9 @@ const Register = () => {
   const [openS, setOpenS] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const phoneRegExp = /^[1-9]{2}[0-9]{8}/;
   const passwordRegExp =
@@ -27,7 +39,7 @@ const Register = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Required"),
+    username: Yup.string().required("Please enter an user name"),
     phoneNumber: Yup.string()
       // .matches(phoneRegExp, "Enter valid phone number")
       .required("Required"),
@@ -48,14 +60,32 @@ const Register = () => {
     setOpen(false);
     setOpenS(false);
   };
+  const handleClickShowPassword = (name) => {
+    if (name === "password") {
+      setShowPassword((show) => !show);
+    }
+    if (name === "confirmPassword") {
+      setShowConfirmPassword((show) => !show);
+    }
+  };
 
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event) => {
+    event.preventDefault();
+  };
   const onSubmit = async (values) => {
     try {
+      setLoading(true);
       const response = await axios.post("/api/user/register", values);
       setSuccess(response.data.message);
+      setLoading(false);
       setOpenS(true);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
+      setLoading(false);
       setOpen(true);
     }
   };
@@ -100,10 +130,36 @@ const Register = () => {
               <Field
                 as={TextField}
                 fullWidth
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 label="Password"
                 variant="outlined"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {" "}
+                        <IconButton
+                          aria-label={
+                            showPassword
+                              ? "hide the password"
+                              : "display the password"
+                          }
+                          onClick={() => handleClickShowPassword("password")}
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          edge="end"
+                        >
+                          {!showPassword ? (
+                            <Icon icon="material-symbols:visibility-outline" />
+                          ) : (
+                            <Icon icon="material-symbols:visibility-off-outline-rounded" />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
                 size="small"
                 error={props.errors.password && props.touched.password}
                 helperText={<ErrorMessage name="password" />}
@@ -113,11 +169,39 @@ const Register = () => {
               <Field
                 as={TextField}
                 fullWidth
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 label="Confirm Password"
                 variant="outlined"
                 size="small"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {" "}
+                        <IconButton
+                          aria-label={
+                            showConfirmPassword
+                              ? "hide the password"
+                              : "display the password"
+                          }
+                          onClick={() =>
+                            handleClickShowPassword("confirmPassword")
+                          }
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          edge="end"
+                        >
+                          {!showConfirmPassword ? (
+                            <Icon icon="material-symbols:visibility-outline" />
+                          ) : (
+                            <Icon icon="material-symbols:visibility-off-outline-rounded" />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
                 error={
                   props.errors.confirmPassword && props.touched.confirmPassword
                 }
@@ -138,7 +222,7 @@ const Register = () => {
                 },
               }}
             >
-              Register
+              {loading ? "Creating a new account..." : "Create an account"}
             </Button>
           </Form>
         )}

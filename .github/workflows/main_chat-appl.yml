@@ -36,14 +36,14 @@ jobs:
 
       - name: Copy client build where server expects it
         run: |
-          mkdir -p ../client_app/dist
-          cp -r client_app/dist/* ../client_app/dist/
+          mkdir -p ../../client_app/dist
+          cp -r client_app/dist/* ../../client_app/dist/
 
 
       - name: Package node_modules
         working-directory: server
         run: |
-         tar -czf node_modules.tar.gz node_modules
+          tar -czf node_modules.tar.gz node_modules
 
 
       - name: Upload artifact for deployment

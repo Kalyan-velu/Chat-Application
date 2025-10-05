@@ -70,7 +70,7 @@ const modalStyle = {
 // 🟣 Styled Button
 const ColorButton = styled(Button)(() => ({
   backgroundColor: purple[500],
-  color: "#fff",
+  color: "#fff !important",
   textTransform: "none",
   fontWeight: 500,
   "&:hover": {

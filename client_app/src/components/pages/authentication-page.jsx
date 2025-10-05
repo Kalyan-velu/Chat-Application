@@ -8,7 +8,7 @@ import { buttonUnstyledClasses } from "@mui/base/ButtonUnstyled";
 import { useNavigate } from "react-router-dom";
 
 const Register = React.lazy(
-  () => import("@/components/pages/pageComponents/authentication/login"),
+  () => import("@/components/pages/pageComponents/authentication/register"),
 );
 const Login = React.lazy(
   () => import("@/components/pages/pageComponents/authentication/login"),

@@ -15,7 +15,7 @@ const Login = () => {
   const [openSuccess, setOpenSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleClose = (event) => {
@@ -24,7 +24,10 @@ const Login = () => {
     setOpenSuccess(false);
   };
 
-  const initialValues = { phoneNumber: "", password: "" };
+  const initialValues = {
+    phoneNumber: "9999999999",
+    password: "5~c~8x)#UbsAk]#",
+  };
   const phoneRegExp = /^[1-9]{0}[0-9]{9}$/;
   const passwordRegExp =
     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
@@ -44,14 +47,16 @@ const Login = () => {
 
   const onSubmit = async (values) => {
     try {
+      setLoading(true);
       const response = await authInstance.post("/login", values);
       setSuccessMsg(response.data.message);
       setOpenSuccess(true);
       localStorage.setItem("userInfo", JSON.stringify(response.data));
-      setTimeout(() => navigate("/app/chats"), 1000);
+      navigate("/app/chats");
     } catch (err) {
       setErrorMsg(err.response?.data?.message || "Login failed");
       setOpenError(true);
+      setLoading(false);
     }
   };
 
@@ -106,7 +111,7 @@ const Login = () => {
                 },
               }}
             >
-              Login
+              {loading ? "Wait a moment..." : "Login"}
             </Button>
           </Form>
         )}
