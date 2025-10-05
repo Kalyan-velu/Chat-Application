@@ -29,7 +29,7 @@ jobs:
 
       # Build frontend
       - name: Build frontend
-        working-directory: client
+        working-directory: client_app
         run: |
           npm install
           npm build
@@ -74,6 +74,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: server
     
+
 
 
 
