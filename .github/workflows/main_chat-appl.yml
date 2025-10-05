@@ -47,13 +47,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C2D14F6A82D944F68D810101DF6D5862 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_63F9E0F9ACC749C8BAC5C12B053F14DD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F388FF26BE38437080D8B6CC413C4259 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -61,5 +54,7 @@ jobs:
         with:
           app-name: 'chat-appl'
           slot-name: 'Production'
-          package: .
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./server
+
           
