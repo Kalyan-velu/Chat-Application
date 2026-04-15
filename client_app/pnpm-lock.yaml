@@ -186,6 +186,7 @@ packages:
   '@base-ui-components/react@1.0.0-beta.3':
     resolution: {integrity: sha512-4sAq6zmDA9ixV2HRjjeM1+tSEw5R6nvGjXUQmFoQnC3DZLEUdwO94gWDmUDdpoDuChn27jdbaJs9F0Ih4w2UAA==}
     engines: {node: '>=14.0.0'}
+    deprecated: Package was renamed to @base-ui/react
     peerDependencies:
       '@types/react': ^17 || ^18 || ^19
       react: ^17 || ^18 || ^19
@@ -196,6 +197,7 @@ packages:
 
   '@base-ui-components/utils@0.1.1':
     resolution: {integrity: sha512-HWXZA8upEKgrdL1rQqxWu1H+2tB2cXzY2jCxvgnpUv3eoWN2jldhXxMZnXIjZF7jahGxSWXfSIM/qskiTWFFxA==}
+    deprecated: Package was renamed to @base-ui/utils
     peerDependencies:
       '@types/react': ^17 || ^18 || ^19
       react: ^17 || ^18 || ^19
@@ -456,7 +458,7 @@ packages:
   '@mui/base@5.0.0-alpha.64':
     resolution: {integrity: sha512-lqUFbAyYPl3uDaTxGWIUWx9Zin5APv5Rrn/oUcnm/71Isd5dJ94zoGHCTdNy2sxhDRcXRshsdC2dfdwIWxhkZA==}
     engines: {node: '>=12.0.0'}
-    deprecated: This package has been replaced by @base-ui-components/react
+    deprecated: This package has been replaced by @base-ui/react
     peerDependencies:
       '@types/react': ^16.8.6 || ^17.0.0
       react: ^17.0.2
